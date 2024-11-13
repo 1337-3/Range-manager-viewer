@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poker Range Visualizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+		html {
+			height: 100%;
+		}
+
+        .upload-container {
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            max-width: 600px;
+            margin: 0;
+            margin-right: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+			position: relative;
+        }
+
+        .upload-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-container h2 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #102a43;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .upload-container input[type="file"] {
+            padding: 20px;
+            border: 2px dashed #bcccdc;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            text-align: center;
+            background-color: #f0f4f8;
+            transition: background-color 0.3s ease, border 0.3s ease;
+            font-size: 16px;
+            color: #627d98;
+        }
+
+        .upload-container input[type="file"]:hover {
+            background-color: #e0e6ed;
+            border-color: #9fb3c8;
+        }
+
+        .upload-container button {
+            background-color: #2f80ed;
+            color: white;
+            border: none;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .upload-container button:hover {
+            background-color: #1c64d1;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-container label {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #334e68;
+            font-weight: 500;
+        }
+
+        .upload-container input[type="number"] {
+            padding: 12px;
+            border: 1px solid #bcccdc;
+            border-radius: 8px;
+            width: 120px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #334e68;
+        }
+
+        .upload-container #columns-selector {
+            margin-bottom: 25px;
+        }
+
+        .upload-container .zoom-controls {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .upload-container .zoom-controls button {
+            background-color: #2f80ed;
+            color: white;
+            border: none;
+            padding: 15px;
+            margin-right: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-size: 20px;
+        }
+
+        .upload-container .zoom-controls button:hover {
+            background-color: #1c64d1;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-container .zoom-controls i {
+            pointer-events: none;
+        }
+
+        .legend-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            margin-left: 20px;
+        }
+
+        .upload-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upload-header h2 {
+            margin: 0;
+        }
+
+        .collapse-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #334e68;
+            transition: transform 0.3s ease;
+        }
+
+        .upload-content.collapsed {
+            display: none;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+
+.main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 200px); /* Ajustez la valeur en fonction de votre mise en page */
+}
+
+.menu-container {
+    width: 300px;
+    padding: 20px;
+    overflow-y: auto; /* Permet le défilement vertical */
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+    max-height: calc(100vh - 150px); /* Ajustez la valeur si nécessaire */
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.menu-container:hover {
+    overflow-y: scroll; /* Ajout pour permettre le défilement lors du survol */
+}
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-header h2 {
+            margin: 0;
+        }
+
+        .menu-collapse-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #333;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-content.collapsed {
+            display: none;
+        }
+
+        .menu-container.collapsed {
+            width: 75px;
+        }
+
+        .menu-container.collapsed .menu-collapse-button i {
+            transform: rotate(180deg);
+        }
+
+        .images-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            transform-origin: 0 0;
+            transition: transform 0.3s ease;
+			    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    overflow: auto;
+    padding: 20px;
+        }
+
+        .range-image {
+            margin-bottom: 20px;
+			transform-origin: top left;
+			transition: transform 0.3s ease;
+        }
+
+		.range-image canvas {
+			width: 100%;
+			height: auto;
+		}
+
+        .category {
+            cursor: pointer;
+            margin: 5px 0;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .category:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .subcategory {
+            margin-top: 5px;
+            display: none;
+            padding-left: 20px;
+        }
+
+        .tab {
+            cursor: pointer;
+            margin: 5px 0;
+            background-color: #6c757d;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: block;
+            margin-left: 40px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .tab:hover {
+            background-color: #5a6268;
+        }
+
+        .category i {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .expanded i {
+            transform: rotate(90deg);
+        }
+
+        .selected {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        #columns-selector {
+            margin-bottom: 20px;
+        }
+
+        .menu-container, .category, .subcategory, .tab {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .subcategory .category:hover {
+            background-color: #0056b3;
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .zoom-controls button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-right: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .zoom-controls button:hover {
+            background-color: #0056b3;
+        }
+
+        .menu-container.collapsed + .images-container {
+            margin-left: 50px;
+        }
+
+.info-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin-left: 20px;
+    flex-grow: 1;
+}
+
+.info-container h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.info-container p {
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.info-container a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.info-container a:hover {
+    text-decoration: underline;
+}
+
+        /* Ajout des focus pour l'accessibilité */
+        .upload-container button:focus,
+        .upload-container input[type="file"]:focus,
+        .upload-container input[type="number"]:focus {
+            outline: 2px solid #2f80ed;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div style="display: flex; align-items: flex-start;">
+        <div class="upload-container">
+            <div class="upload-header">
+                <h2>Upload Range Manager File</h2>
+                <button class="collapse-button" onclick="toggleUploadContainer()">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="upload-content">
+                <input type="file" id="fileInput" accept=".rm" />
+                <button onclick="handleFileUpload()"><i class="fas fa-file-upload"></i> Afficher</button>
+                <div id="columns-selector">
+                    <label for="numColumns">Nombre de Colonnes: </label>
+                    <input type="number" id="numColumns" value="2" min="1" max="5" onchange="updateImageLayout()">
+                </div>
+                <button onclick="clearImages()"><i class="fas fa-trash-alt"></i> Effacer les Images</button>
+				<div class="zoom-controls">
+					<button onclick="zoomImages(1.1)"><i class="fas fa-search-plus"></i></button>
+					<button onclick="zoomImages(0.9)"><i class="fas fa-search-minus"></i></button>
+				</div>
+            </div>
+        </div>
+        <div class="legend-container" id="legend-container">
+            <h2>Légendes des Actions</h2>
+        </div>
+		<div class="info-container" id="info-container">
+			<h2>Informations</h2>
+			<p>Le <b>Poker Range Visualizer</b> est une application web qui vous permet de charger et de visualiser des ranges exportées depuis <a href="https://range-manager.com/" target="_blank"><b>Range Manager</b></a>. Vous pouvez naviguer dans les catégories et les ranges via le menu latéral, afficher ou masquer les images correspondantes, ajuster le zoom sur les images, et personnaliser l'affichage en modifiant le nombre de colonnes. Les panneaux de contrôle et de menu peuvent être réduits pour optimiser l'espace, et une légende vous aide à comprendre les actions représentées par les couleurs.</p>
+			<p>Vos ranges sont traitées en local par votre navigateur et resteront privées</p>
+			<p>L'auteur de cette page n'a aucun lien avec Range Manager, ni ne perçoit de rémunération mais vous encourage à soutenir l'auteur de Range Manager, n'hésitez pas à <a href="https://range-manager.com/buy/" target="_blank"><strong>Acheter une licence</strong></a>.</p>
+			
+			
+		</div>
+
+    </div>
+
+    <div class="main-container">
+        <div class="menu-container" id="range-container">
+            <div class="menu-header">
+                <h2>Menu</h2>
+                <button class="menu-collapse-button" onclick="toggleMenuContainer()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            <div class="menu-content" id="menu-content">
+                <!-- Le contenu du menu sera généré ici -->
+            </div>
+        </div>
+        <div class="images-container" id="images-container"></div>
+    </div>
+
+    <script>
+        let zoomLevel = 1;
+
+        function handleFileUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file to upload.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const fileContent = event.target.result;
+                try {
+                    const rangesData = JSON.parse(fileContent);
+                    displayCategorySelection(rangesData);
+                    updateLegend(rangesData);
+                } catch (error) {
+                    alert('Invalid JSON format. Please upload a valid file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+function displayCategorySelection(rangesData) {
+    const menuContent = document.getElementById('menu-content');
+    menuContent.innerHTML = '';
+
+    const categories = rangesData.categories;
+    if (!categories) {
+        menuContent.innerHTML = '<p>Aucune catégorie trouvée dans le fichier.</p>';
+        return;
+    }
+
+    function createCategoryElement(categoryId, parentPath) {
+        const category = categories[categoryId];
+        if (!category) return null;
+
+        const newPath = parentPath ? parentPath + ' > ' + category.name : category.name;
+
+        const categoryElement = document.createElement('div');
+        categoryElement.className = 'category';
+        categoryElement.innerHTML = `<i class="fas fa-angle-right"></i>${category.name}`;
+        categoryElement.onclick = function(event) {
+            event.stopPropagation();
+
+            const subcategoryElement = categoryElement.querySelector('.subcategory');
+            if (subcategoryElement) {
+                const isExpanded = subcategoryElement.style.display === 'block';
+                if (!isExpanded) {
+                    subcategoryElement.style.display = 'block';
+                    categoryElement.classList.add('expanded');
+                    const icon = categoryElement.querySelector('i');
+                    if (icon) {
+                        icon.className = 'fas fa-angle-down';
+                    }
+                } else {
+                    subcategoryElement.style.display = 'none';
+                    categoryElement.classList.remove('expanded');
+                    const icon = categoryElement.querySelector('i');
+                    if (icon) {
+                        icon.className = 'fas fa-angle-right';
+                    }
+                }
+            }
+        };
+
+        if (category.children) {
+            const subcategoryElement = createSubcategoryElement(category, newPath, category.children, false);
+            if (subcategoryElement) {
+                categoryElement.appendChild(subcategoryElement);
+            }
+        } else if (category.tabList) {
+            const subcategoryElement = createSubcategoryElement(category, newPath, category.tabList, true);
+            if (subcategoryElement) {
+                categoryElement.appendChild(subcategoryElement);
+            }
+        }
+
+        return categoryElement;
+    }
+
+    function createSubcategoryElement(category, newPath, items, isTabList) {
+        const subcategoryElement = document.createElement('div');
+        subcategoryElement.className = 'subcategory';
+        subcategoryElement.style.display = 'none';
+
+        items.forEach(id => {
+            if (isTabList) {
+                if (category.tabs && category.tabs[id]) {
+                    const tab = category.tabs[id];
+                    const tabElement = document.createElement('div');
+                    tabElement.className = 'tab';
+                    tabElement.textContent = tab.name;
+                    tabElement.dataset.fullName = newPath + ' > ' + tab.name; // Ajout de l'attribut data-full-name
+                    tabElement.onclick = function(event) {
+                        event.stopPropagation();
+                        toggleRangeImage(tab, newPath + ' > ' + tab.name, rangesData);
+                    };
+                    subcategoryElement.appendChild(tabElement);
+                }
+            } else {
+                const childCategoryElement = createCategoryElement(id, newPath);
+                if (childCategoryElement) {
+                    subcategoryElement.appendChild(childCategoryElement);
+                }
+            }
+        });
+
+        return subcategoryElement;
+    }
+
+    // Démarrage de la génération du menu à partir de la racine
+    if (categories.root && categories.root.children) {
+        categories.root.children.forEach(childId => {
+            const rootCategoryElement = createCategoryElement(childId, '');
+            if (rootCategoryElement) {
+                menuContent.appendChild(rootCategoryElement);
+            }
+        });
+    } else {
+        menuContent.innerHTML = '<p>Aucune catégorie racine trouvée.</p>';
+    }
+}
+
+function toggleRangeImage(tab, tabFullName, rangesData) {
+    const imagesContainer = document.getElementById('images-container');
+    const existingImage = [...imagesContainer.children].find(child => child.dataset.fullName === tabFullName);
+
+    // Identifier l'élément de l'onglet en utilisant data-full-name
+    const tabElements = document.querySelectorAll('.tab');
+    let tabElement = null;
+    tabElements.forEach(element => {
+        if (element.dataset.fullName === tabFullName) {
+            tabElement = element;
+        }
+    });
+
+    if (existingImage) {
+        imagesContainer.removeChild(existingImage);
+        if (tabElement) tabElement.classList.remove('selected');
+        return;
+    }
+
+    const combinedHands = {};
+
+    if (Array.isArray(tab.rangeList)) {
+        tab.rangeList.forEach(range => {
+            if (range && rangesData.ranges[range.id]) {
+                const rangeData = rangesData.ranges[range.id];
+                const color = rangeData.color;
+                const type = rangeData.type;
+
+                if (Array.isArray(range.hands)) {
+                    range.hands.forEach(hand => {
+                        const [handName, ratio] = hand.split(':');
+                        const ratioValue = ratio ? parseFloat(ratio) : 1.0;
+                        if (!combinedHands[handName]) {
+                            combinedHands[handName] = [];
+                        }
+                        combinedHands[handName].push({ color, type, ratio: ratioValue });
+                    });
+                }
+            }
+        });
+    } else {
+        console.error('tab.rangeList is not defined or not an array:', tab.rangeList);
+        alert('No ranges found for this tab.');
+        return;
+    }
+
+    generateRangeImage(combinedHands, tabFullName);
+    if (tabElement) tabElement.classList.add('selected');
+}
+
+function generateRangeImage(handsWithColors, rangeName) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 400;
+    canvas.height = 400;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    const gridSize = 30;
+    const labels = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
+
+    // Dessiner la grille
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#000';
+
+    for (let i = 0; i <= 13; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * gridSize, 0);
+        ctx.lineTo(i * gridSize, gridSize * 13);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, i * gridSize);
+        ctx.lineTo(gridSize * 13, i * gridSize);
+        ctx.stroke();
+    }
+
+    // Dessiner les étiquettes
+    ctx.fillStyle = '#000';
+    ctx.font = '14px Arial';
+    for (let i = 0; i < 13; i++) {
+        ctx.fillText(labels[i], i * gridSize + gridSize / 2 - 5, 15);
+        ctx.fillText(labels[i], 5, i * gridSize + gridSize / 2 + 5);
+    }
+
+    // Remplir les cellules et ajouter les labels pour toutes les mains
+    for (let row = 0; row < 13; row++) {
+        for (let col = 0; col < 13; col++) {
+            let rank1 = labels[row];
+            let rank2 = labels[col];
+            let displayHand;
+            let isSuited = row < col;
+
+            if (row === col) {
+                displayHand = rank1 + rank2;
+            } else if (isSuited) {
+                displayHand = rank1 + rank2 + 's';
+            } else {
+                displayHand = rank2 + rank1 + 'o';
+            }
+
+            if (handsWithColors[displayHand]) {
+                const handDetails = handsWithColors[displayHand];
+
+                if (handDetails.length === 1) {
+                    const { color, type, ratio } = handDetails[0];
+                    if (type === 'color') {
+                        ctx.fillStyle = color;
+                        ctx.fillRect(col * gridSize + 1, row * gridSize + 1, gridSize - 2, gridSize - 2);
+                    }
+                } else {
+                    let startX = col * gridSize + 1;
+                    handDetails.forEach(({ color, type, ratio }) => {
+                        if (type === 'color') {
+                            const width = (gridSize - 2) * ratio;
+                            ctx.fillStyle = color;
+                            ctx.fillRect(startX, row * gridSize + 1, width, gridSize - 2);
+                            startX += width;
+                        }
+                    });
+                }
+
+                handDetails.forEach(({ color, type }) => {
+                    if (type === 'border') {
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 4;
+                        ctx.strokeRect(col * gridSize + 2, row * gridSize + 2, gridSize - 4, gridSize - 4);
+                    }
+                });
+            } else {
+                ctx.fillStyle = '#ccc';
+                ctx.fillRect(col * gridSize + 1, row * gridSize + 1, gridSize - 2, gridSize - 2);
+            }
+
+            ctx.fillStyle = '#000';
+            const textWidth = ctx.measureText(displayHand).width;
+            ctx.fillText(displayHand, col * gridSize + (gridSize - textWidth) / 2, row * gridSize + gridSize / 2 + 5);
+        }
+    }
+
+    const imagesContainer = document.getElementById('images-container');
+    const rangeImage = document.createElement('div');
+    rangeImage.classList.add('range-image');
+    rangeImage.dataset.fullName = rangeName; // Ajout de l'attribut data-full-name
+    rangeImage.innerHTML = `<h3>${rangeName}</h3>`;
+    rangeImage.appendChild(canvas);
+    imagesContainer.appendChild(rangeImage);
+
+    updateImageLayout();
+}
+
+
+        function updateLegend(rangesData) {
+            const legendContainer = document.getElementById('legend-container');
+            legendContainer.innerHTML = '<h2>Légendes des Actions</h2>';
+
+            const ranges = rangesData.ranges;
+            if (ranges) {
+                Object.keys(ranges).forEach(rangeId => {
+                    const range = ranges[rangeId];
+                    if (range.color && range.name) {
+                        const legendItem = document.createElement('div');
+                        legendItem.className = 'legend-item';
+                        legendItem.innerHTML = `
+                            <div class="legend-color" style="${range.type === 'border' ? 'border: 5px solid ' + range.color + '; width: 15px; height: 15px;' : 'background-color: ' + range.color};"></div>
+                            <span>${range.name}</span>
+                        `;
+                        legendContainer.appendChild(legendItem);
+                    }
+                });
+            }
+        }
+
+        function updateImageLayout() {
+            const imagesContainer = document.getElementById('images-container');
+            const numColumns = parseInt(document.getElementById('numColumns').value, 10);
+            imagesContainer.style.display = 'grid';
+            imagesContainer.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`;
+            imagesContainer.style.gap = '20px';
+        }
+
+		function zoomImages(factor) {
+			zoomLevel *= factor;
+			const rangeImages = document.querySelectorAll('.range-image');
+			rangeImages.forEach(rangeImage => {
+				rangeImage.style.transform = `scale(${zoomLevel})`;
+			});
+		}
+
+        function clearImages() {
+            const imagesContainer = document.getElementById('images-container');
+            imagesContainer.innerHTML = '';
+            document.getElementById('legend-container').innerHTML = '<h2>Légendes des Actions</h2>';
+
+            const tabElements = document.querySelectorAll('.tab.selected');
+            tabElements.forEach(tab => tab.classList.remove('selected'));
+        }
+        // Fonction pour basculer le upload-container
+        function toggleUploadContainer() {
+            const uploadContent = document.querySelector('.upload-content');
+            const collapseButtonIcon = document.querySelector('.collapse-button i');
+            if (uploadContent.classList.contains('collapsed')) {
+                uploadContent.classList.remove('collapsed');
+                collapseButtonIcon.classList.remove('fa-chevron-down');
+                collapseButtonIcon.classList.add('fa-chevron-up');
+            } else {
+                uploadContent.classList.add('collapsed');
+                collapseButtonIcon.classList.remove('fa-chevron-up');
+                collapseButtonIcon.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Fonction pour basculer le menu-container
+        function toggleMenuContainer() {
+            const menuContainer = document.querySelector('.menu-container');
+            const menuContent = document.querySelector('.menu-content');
+            const menuCollapseButtonIcon = document.querySelector('.menu-collapse-button i');
+            if (menuContainer.classList.contains('collapsed')) {
+                menuContainer.classList.remove('collapsed');
+                menuContent.classList.remove('collapsed');
+                menuCollapseButtonIcon.classList.remove('fa-chevron-right');
+                menuCollapseButtonIcon.classList.add('fa-chevron-left');
+            } else {
+                menuContainer.classList.add('collapsed');
+                menuContent.classList.add('collapsed');
+                menuCollapseButtonIcon.classList.remove('fa-chevron-left');
+                menuCollapseButtonIcon.classList.add('fa-chevron-right');
+            }
+        }
+
+    </script>
+</body>
+</html>
