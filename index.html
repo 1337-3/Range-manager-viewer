@@ -14,34 +14,89 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            overflow: hidden;
         }
 
-		html {
-			height: 100%;
-		}
+        html {
+            height: 100%;
+        }
 
-        .upload-container {
+        .upload-container, .legend-container, .info-container, .menu-container {
             background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-            padding: 40px;
+            padding: 20px;
             border-radius: 20px;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
             max-width: 600px;
             margin: 0;
-            margin-right: 20px;
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
-			position: relative;
+            position: fixed;
+            z-index: 1000;
+            min-height: 200px;
         }
 
-        .upload-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        .upload-container {
+            top: 20px;
+            left: 20px;
         }
 
-        .upload-container h2 {
-            font-size: 28px;
-            margin-bottom: 25px;
+        .legend-container {
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+        }
+
+        .info-container {
+            bottom: 20px;
+            right: 20px;
+        }
+
+        .menu-container.fixed {
+            left: 20px;
+            width: 300px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .upload-icon, .legend-icon, .info-icon, .menu-icon {
+            position: fixed;
+            background-color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .upload-icon {
+            top: 20px;
+            left: 20px;
+        }
+
+        .legend-icon {
+            top: 20px;
+            right: 20px;
+        }
+
+        .info-icon {
+            bottom: 20px;
+            right: 20px;
+        }
+
+        .menu-icon {
+            left: 20px;
+        }
+
+        .upload-container h2, .legend-container h2, .info-container h2, .menu-container h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
             color: #102a43;
             text-align: center;
             font-weight: bold;
@@ -51,7 +106,7 @@
             padding: 20px;
             border: 2px dashed #bcccdc;
             border-radius: 12px;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             cursor: pointer;
             text-align: center;
             background-color: #f0f4f8;
@@ -65,27 +120,27 @@
             border-color: #9fb3c8;
         }
 
-        .upload-container button {
+        .upload-container button, .legend-container button, .info-container button, .menu-container button {
             background-color: #2f80ed;
             color: white;
             border: none;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 10px;
+            margin-bottom: 10px;
             cursor: pointer;
             border-radius: 12px;
             transition: background-color 0.3s ease, transform 0.3s ease;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
         }
 
-        .upload-container button:hover {
+        .upload-container button:hover, .legend-container button:hover, .info-container button:hover, .menu-container button:hover {
             background-color: #1c64d1;
             transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
         }
 
         .upload-container label {
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 10px;
             color: #334e68;
             font-weight: 500;
@@ -96,165 +151,47 @@
             border: 1px solid #bcccdc;
             border-radius: 8px;
             width: 120px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-size: 16px;
             color: #334e68;
         }
 
-        .upload-container #columns-selector {
-            margin-bottom: 25px;
-        }
-
-        .upload-container .zoom-controls {
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-        }
-
-        .upload-container .zoom-controls button {
-            background-color: #2f80ed;
-            color: white;
-            border: none;
-            padding: 15px;
-            margin-right: 10px;
-            cursor: pointer;
-            border-radius: 50%;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            font-size: 20px;
-        }
-
-        .upload-container .zoom-controls button:hover {
-            background-color: #1c64d1;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .upload-container .zoom-controls i {
-            pointer-events: none;
-        }
-
-        .legend-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 300px;
-            margin-left: 20px;
-        }
-
-        .upload-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .upload-header h2 {
-            margin: 0;
-        }
-
-        .collapse-button {
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 24px;
-            color: #334e68;
-            transition: transform 0.3s ease;
-        }
-
-        .upload-content.collapsed {
-            display: none;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            border-radius: 3px;
-        }
-
-.main-container {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-    height: calc(100vh - 200px); /* Ajustez la valeur en fonction de votre mise en page */
-}
-
-.menu-container {
-    width: 300px;
-    padding: 20px;
-    overflow-y: auto; /* Permet le défilement vertical */
-    background-color: #f8f9fa;
-    border-right: 1px solid #ddd;
-    max-height: calc(100vh - 150px); /* Ajustez la valeur si nécessaire */
-    transition: width 0.3s ease;
-    position: relative;
-}
-
-.menu-container:hover {
-    overflow-y: scroll; /* Ajout pour permettre le défilement lors du survol */
-}
-
-        .menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .menu-header h2 {
-            margin: 0;
-        }
-
-        .menu-collapse-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px;
+            font-size: 18px;
             color: #333;
-            transition: transform 0.3s ease;
         }
 
-        .menu-content.collapsed {
-            display: none;
-        }
+    .main-container {
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        top: 80px;
+        transition: top 0.3s ease, margin-left 0.3s ease, width 0.3s ease;
+        margin-left: 350px;
+        width: calc(100% - 350px);
+    }
 
-        .menu-container.collapsed {
-            width: 75px;
-        }
+    .range-image {
+        margin-bottom: 0px;
+        transition: width 0.3s ease;
+    }
 
-        .menu-container.collapsed .menu-collapse-button i {
-            transform: rotate(180deg);
-        }
+    .range-image canvas {
+        width: 100%;
+        height: auto;
+    }
 
-        .images-container {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            transform-origin: 0 0;
-            transition: transform 0.3s ease;
-			    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    overflow: auto;
-    padding: 20px;
-        }
-
-        .range-image {
-            margin-bottom: 20px;
-			transform-origin: top left;
-			transition: transform 0.3s ease;
-        }
-
-		.range-image canvas {
-			width: 100%;
-			height: auto;
-		}
-
+    .images-container {
+        display: grid;
+        width: 100%;
+        overflow-y: auto;
+    }
         .category {
             cursor: pointer;
             margin: 5px 0;
@@ -314,7 +251,7 @@
         }
 
         #columns-selector {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .menu-container, .category, .subcategory, .tab {
@@ -333,119 +270,115 @@
             margin-top: 10px;
         }
 
-        .zoom-controls button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px;
-            margin-right: 5px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
+        .zoom-slider {
+            width: 100%;
+            margin-top: 10px;
         }
 
-        .zoom-controls button:hover {
-            background-color: #0056b3;
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
         }
 
-        .menu-container.collapsed + .images-container {
-            margin-left: 50px;
-        }
-
-.info-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-    margin-left: 20px;
-    flex-grow: 1;
-}
-
-.info-container h2 {
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.info-container p {
-    margin-bottom: 10px;
-    color: #555;
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-.info-container a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.info-container a:hover {
-    text-decoration: underline;
-}
-
-        /* Ajout des focus pour l'accessibilité */
-        .upload-container button:focus,
-        .upload-container input[type="file"]:focus,
-        .upload-container input[type="number"]:focus {
-            outline: 2px solid #2f80ed;
-            outline-offset: 2px;
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
         }
     </style>
 </head>
 <body>
-    <div style="display: flex; align-items: flex-start;">
-        <div class="upload-container">
-            <div class="upload-header">
-                <h2>Upload Range Manager File</h2>
-                <button class="collapse-button" onclick="toggleUploadContainer()">
-                    <i class="fas fa-chevron-up"></i>
-                </button>
-            </div>
-            <div class="upload-content">
-                <input type="file" id="fileInput" accept=".rm" />
-                <button onclick="handleFileUpload()"><i class="fas fa-file-upload"></i> Afficher</button>
-                <div id="columns-selector">
-                    <label for="numColumns">Nombre de Colonnes: </label>
-                    <input type="number" id="numColumns" value="2" min="1" max="5" onchange="updateImageLayout()">
-                </div>
-                <button onclick="clearImages()"><i class="fas fa-trash-alt"></i> Effacer les Images</button>
-				<div class="zoom-controls">
-					<button onclick="zoomImages(1.1)"><i class="fas fa-search-plus"></i></button>
-					<button onclick="zoomImages(0.9)"><i class="fas fa-search-minus"></i></button>
-				</div>
-            </div>
-        </div>
-        <div class="legend-container" id="legend-container">
-            <h2>Légendes des Actions</h2>
-        </div>
-		<div class="info-container" id="info-container">
-			<h2>Informations</h2>
-			<p>Le <b>Poker Range Visualizer</b> est une application web qui vous permet de charger et de visualiser des ranges exportées depuis <a href="https://range-manager.com/" target="_blank"><b>Range Manager</b></a>. Vous pouvez naviguer dans les catégories et les ranges via le menu latéral, afficher ou masquer les images correspondantes, ajuster le zoom sur les images, et personnaliser l'affichage en modifiant le nombre de colonnes. Les panneaux de contrôle et de menu peuvent être réduits pour optimiser l'espace, et une légende vous aide à comprendre les actions représentées par les couleurs.</p>
-			<p>Vos ranges sont traitées en local par votre navigateur et resteront privées</p>
-			<p>L'auteur de cette page n'a aucun lien avec Range Manager, ni ne perçoit de rémunération mais vous encourage à soutenir l'auteur de Range Manager, n'hésitez pas à <a href="https://range-manager.com/buy/" target="_blank"><strong>Acheter une licence</strong></a>.</p>
-			
-			
-		</div>
-
+    <div class="upload-icon" id="upload-icon" onclick="toggleUploadContainer()">
+        <i class="fas fa-upload"></i>
     </div>
 
-    <div class="main-container">
-        <div class="menu-container" id="range-container">
-            <div class="menu-header">
-                <h2>Menu</h2>
-                <button class="menu-collapse-button" onclick="toggleMenuContainer()">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-            </div>
-            <div class="menu-content" id="menu-content">
-                <!-- Le contenu du menu sera généré ici -->
-            </div>
+    <div class="upload-container" id="upload-container">
+        <button class="close-button" onclick="toggleUploadContainer()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2>Upload Range Manager File</h2>
+        <input type="file" id="fileInput" accept=".rm" />
+        <button onclick="handleFileUpload()"><i class="fas fa-file-upload"></i> Afficher</button>
+        <div id="columns-selector">
+            <label for="numColumns">Nombre de Colonnes: </label>
+            <input type="number" id="numColumns" value="4" min="1" max="8" onchange="updateImageLayout()">
         </div>
+        <button onclick="clearImages()"><i class="fas fa-trash-alt"></i> Effacer les Images</button>
+        <input type="range" id="zoomSlider" class="zoom-slider" min="0.2" max="4" step="0.1" value="1" oninput="updateZoom()">
+        <label for="zoomSlider">Zoom: <span id="zoomValue">1</span>x</label>
+    </div>
+
+    <div class="legend-icon" id="legend-icon" onclick="toggleLegendContainer()">
+        <i class="fas fa-list-alt"></i>
+    </div>
+
+    <div class="legend-container hidden" id="legend-container">
+        <button class="close-button" onclick="toggleLegendContainer()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2>Légendes des Actions</h2>
+        <div id="legend-content"></div>
+    </div>
+
+    <div class="info-icon hidden" id="info-icon" onclick="toggleInfoContainer()">
+        <i class="fas fa-info-circle"></i>
+    </div>
+
+    <div class="info-container" id="info-container">
+        <button class="close-button" onclick="toggleInfoContainer()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2>Informations</h2>
+        <p>Le <b>Poker Range Visualizer</b> est une application web qui vous permet de charger et de visualiser des ranges exportées depuis <a href="https://range-manager.com/" target="_blank"><b>Range Manager</b></a>. Vous pouvez naviguer dans les catégories et les ranges via le menu latéral, afficher ou masquer les images correspondantes, ajuster le zoom sur les images, et personnaliser l'affichage en modifiant le nombre de colonnes. Les panneaux de contrôle et de menu peuvent être réduits pour optimiser l'espace, et une légende vous aide à comprendre les actions représentées par les couleurs.</p>
+        <p>Vos ranges sont traitées en local par votre navigateur et resteront privées</p>
+        <p>L'auteur de cette page n'a aucun lien avec Range Manager, ni ne perçoit de rémunération mais vous encourage à soutenir l'auteur de Range Manager, n'hésitez pas à <a href="https://range-manager.com/buy/" target="_blank"><strong>Acheter une licence</strong></a>.</p>
+    </div>
+
+    <div class="menu-icon hidden" id="menu-icon" onclick="toggleMenuContainer()" style="top: calc(20px + 20px + 20px + 200px);">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <div class="menu-container fixed" id="menu-container" style="top: calc(20px + 20px + 20px + 200px);">
+        <button class="close-button" onclick="toggleMenuContainer()">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2>Menu</h2>
+        <div class="menu-content" id="menu-content">
+            <!-- Le contenu du menu sera généré ici -->
+        </div>
+    </div>
+
+    <div class="main-container" id="main-container" style="margin-left: 350px;">
         <div class="images-container" id="images-container"></div>
     </div>
 
-    <script>
-        let zoomLevel = 1;
+<script>
+    window.addEventListener('load', function() {
+        adjustContainerPositions();
+        adjustImageContainerHeight();
+    });
+
+    window.addEventListener('resize', function() {
+        adjustContainerPositions();
+        adjustImageContainerHeight();
+    });
+
+    function adjustContainerPositions() {
+        const uploadContainer = document.getElementById('upload-container');
+        const menuContainer = document.getElementById('menu-container');
+        const menuIcon = document.getElementById('menu-icon');
+        const mainContainer = document.getElementById('main-container');
+        const offset = uploadContainer.classList.contains('hidden') ? 80 : uploadContainer.offsetHeight + 40;
+
+        mainContainer.style.top = `${offset}px`;
+        menuContainer.style.top = `${offset}px`;
+        menuIcon.style.top = `${offset}px`;
+    }
+
+    let zoomLevel = 1;
+    let rangesData = null;
 
         function handleFileUpload() {
             const fileInput = document.getElementById('fileInput');
@@ -462,6 +395,8 @@
                     const rangesData = JSON.parse(fileContent);
                     displayCategorySelection(rangesData);
                     updateLegend(rangesData);
+                    document.querySelector('.legend-container').classList.remove('hidden');
+                    document.querySelector('.legend-icon').classList.add('hidden');
                 } catch (error) {
                     alert('Invalid JSON format. Please upload a valid file.');
                 }
@@ -469,192 +404,269 @@
             reader.readAsText(file);
         }
 
-function displayCategorySelection(rangesData) {
-    const menuContent = document.getElementById('menu-content');
-    menuContent.innerHTML = '';
-
-    const categories = rangesData.categories;
-    if (!categories) {
-        menuContent.innerHTML = '<p>Aucune catégorie trouvée dans le fichier.</p>';
-        return;
-    }
-
-    function createCategoryElement(categoryId, parentPath) {
-        const category = categories[categoryId];
-        if (!category) return null;
-
-        const newPath = parentPath ? parentPath + ' > ' + category.name : category.name;
-
-        const categoryElement = document.createElement('div');
-        categoryElement.className = 'category';
-        categoryElement.innerHTML = `<i class="fas fa-angle-right"></i>${category.name}`;
-        categoryElement.onclick = function(event) {
-            event.stopPropagation();
-
-            const subcategoryElement = categoryElement.querySelector('.subcategory');
-            if (subcategoryElement) {
-                const isExpanded = subcategoryElement.style.display === 'block';
-                if (!isExpanded) {
-                    subcategoryElement.style.display = 'block';
-                    categoryElement.classList.add('expanded');
-                    const icon = categoryElement.querySelector('i');
-                    if (icon) {
-                        icon.className = 'fas fa-angle-down';
-                    }
-                } else {
-                    subcategoryElement.style.display = 'none';
-                    categoryElement.classList.remove('expanded');
-                    const icon = categoryElement.querySelector('i');
-                    if (icon) {
-                        icon.className = 'fas fa-angle-right';
-                    }
-                }
-            }
-        };
-
-        if (category.children) {
-            const subcategoryElement = createSubcategoryElement(category, newPath, category.children, false);
-            if (subcategoryElement) {
-                categoryElement.appendChild(subcategoryElement);
-            }
-        } else if (category.tabList) {
-            const subcategoryElement = createSubcategoryElement(category, newPath, category.tabList, true);
-            if (subcategoryElement) {
-                categoryElement.appendChild(subcategoryElement);
-            }
-        }
-
-        return categoryElement;
-    }
-
-    function createSubcategoryElement(category, newPath, items, isTabList) {
-        const subcategoryElement = document.createElement('div');
-        subcategoryElement.className = 'subcategory';
-        subcategoryElement.style.display = 'none';
-
-        items.forEach(id => {
-            if (isTabList) {
-                if (category.tabs && category.tabs[id]) {
-                    const tab = category.tabs[id];
-                    const tabElement = document.createElement('div');
-                    tabElement.className = 'tab';
-                    tabElement.textContent = tab.name;
-                    tabElement.dataset.fullName = newPath + ' > ' + tab.name; // Ajout de l'attribut data-full-name
-                    tabElement.onclick = function(event) {
-                        event.stopPropagation();
-                        toggleRangeImage(tab, newPath + ' > ' + tab.name, rangesData);
-                    };
-                    subcategoryElement.appendChild(tabElement);
-                }
+        function toggleUploadContainer() {
+            const uploadContainer = document.getElementById('upload-container');
+            const uploadIcon = document.getElementById('upload-icon');
+            const mainContainer = document.getElementById('main-container');
+            const menuContainer = document.getElementById('menu-container');
+            const menuIcon = document.getElementById('menu-icon');
+            if (uploadContainer.classList.contains('hidden')) {
+                uploadContainer.classList.remove('hidden');
+                uploadIcon.classList.add('hidden');
+                mainContainer.style.top = `${uploadContainer.offsetHeight + 40}px`;
+                menuContainer.style.top = `${uploadContainer.offsetHeight + 80}px`;
+                menuIcon.style.top = `${uploadContainer.offsetHeight + 80}px`;
+                adjustImageContainerHeight();
             } else {
-                const childCategoryElement = createCategoryElement(id, newPath);
-                if (childCategoryElement) {
-                    subcategoryElement.appendChild(childCategoryElement);
-                }
+                uploadContainer.classList.add('hidden');
+                uploadIcon.classList.remove('hidden');
+                mainContainer.style.top = '80px';
+                menuContainer.style.top = '100px';
+                menuIcon.style.top = '100px';
+                adjustImageContainerHeight();
             }
-        });
-
-        return subcategoryElement;
-    }
-
-    // Démarrage de la génération du menu à partir de la racine
-    if (categories.root && categories.root.children) {
-        categories.root.children.forEach(childId => {
-            const rootCategoryElement = createCategoryElement(childId, '');
-            if (rootCategoryElement) {
-                menuContent.appendChild(rootCategoryElement);
-            }
-        });
-    } else {
-        menuContent.innerHTML = '<p>Aucune catégorie racine trouvée.</p>';
-    }
-}
-
-function toggleRangeImage(tab, tabFullName, rangesData) {
-    const imagesContainer = document.getElementById('images-container');
-    const existingImage = [...imagesContainer.children].find(child => child.dataset.fullName === tabFullName);
-
-    // Identifier l'élément de l'onglet en utilisant data-full-name
-    const tabElements = document.querySelectorAll('.tab');
-    let tabElement = null;
-    tabElements.forEach(element => {
-        if (element.dataset.fullName === tabFullName) {
-            tabElement = element;
         }
-    });
 
-    if (existingImage) {
-        imagesContainer.removeChild(existingImage);
-        if (tabElement) tabElement.classList.remove('selected');
-        return;
-    }
-
-    const combinedHands = {};
-
-    if (Array.isArray(tab.rangeList)) {
-        tab.rangeList.forEach(range => {
-            if (range && rangesData.ranges[range.id]) {
-                const rangeData = rangesData.ranges[range.id];
-                const color = rangeData.color;
-                const type = rangeData.type;
-
-                if (Array.isArray(range.hands)) {
-                    range.hands.forEach(hand => {
-                        const [handName, ratio] = hand.split(':');
-                        const ratioValue = ratio ? parseFloat(ratio) : 1.0;
-                        if (!combinedHands[handName]) {
-                            combinedHands[handName] = [];
-                        }
-                        combinedHands[handName].push({ color, type, ratio: ratioValue });
-                    });
-                }
+        function toggleLegendContainer() {
+            const legendContainer = document.getElementById('legend-container');
+            const legendIcon = document.getElementById('legend-icon');
+            if (legendContainer.classList.contains('hidden')) {
+                legendContainer.classList.remove('hidden');
+                legendIcon.classList.add('hidden');
+                updateLegend(window.rangesData);
+            } else {
+                legendContainer.classList.add('hidden');
+                legendIcon.classList.remove('hidden');
             }
-        });
-    } else {
-        console.error('tab.rangeList is not defined or not an array:', tab.rangeList);
-        alert('No ranges found for this tab.');
-        return;
+        }
+
+        function toggleInfoContainer() {
+            const infoContainer = document.getElementById('info-container');
+            const infoIcon = document.getElementById('info-icon');
+            if (infoContainer.classList.contains('hidden')) {
+                infoContainer.classList.remove('hidden');
+                infoIcon.classList.add('hidden');
+            } else {
+                infoContainer.classList.add('hidden');
+                infoIcon.classList.remove('hidden');
+            }
+            adjustImageContainerHeight();
+        }
+
+    function toggleMenuContainer() {
+        const menuContainer = document.getElementById('menu-container');
+        const menuIcon = document.getElementById('menu-icon');
+        const mainContainer = document.getElementById('main-container');
+        if (menuContainer.classList.contains('hidden')) {
+            menuContainer.classList.remove('hidden');
+            menuIcon.classList.add('hidden');
+            mainContainer.style.marginLeft = '350px';
+            mainContainer.style.width = 'calc(100% - 350px)';
+        } else {
+            menuContainer.classList.add('hidden');
+            menuIcon.classList.remove('hidden');
+            mainContainer.style.marginLeft = '80px';
+            mainContainer.style.width = 'calc(100% - 80px)';
+        }
+        adjustImageContainerHeight();
     }
 
-    generateRangeImage(combinedHands, tabFullName);
-    if (tabElement) tabElement.classList.add('selected');
-}
+
+        function displayCategorySelection(rangesData) {
+            const menuContent = document.getElementById('menu-content');
+            menuContent.innerHTML = '';
+            window.rangesData = rangesData;
+
+            const categories = rangesData.categories;
+            if (!categories) {
+                menuContent.innerHTML = '<p>Aucune catégorie trouvée dans le fichier.</p>';
+                return;
+            }
+
+            function createCategoryElement(categoryId, parentPath) {
+                const category = categories[categoryId];
+                if (!category) return null;
+
+                const newPath = parentPath ? parentPath + ' > ' + category.name : category.name;
+
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'category';
+                categoryElement.innerHTML = `<i class="fas fa-angle-right"></i>${category.name}`;
+                categoryElement.onclick = function(event) {
+                    event.stopPropagation();
+
+                    const subcategoryElement = categoryElement.querySelector('.subcategory');
+                    if (subcategoryElement) {
+                        const isExpanded = subcategoryElement.style.display === 'block';
+                        if (!isExpanded) {
+                            subcategoryElement.style.display = 'block';
+                            categoryElement.classList.add('expanded');
+                            const icon = categoryElement.querySelector('i');
+                            if (icon) {
+                                icon.className = 'fas fa-angle-down';
+                            }
+                            scrollToCategory(categoryElement);
+                        } else {
+                            subcategoryElement.style.display = 'none';
+                            categoryElement.classList.remove('expanded');
+                            const icon = categoryElement.querySelector('i');
+                            if (icon) {
+                                icon.className = 'fas fa-angle-right';
+                            }
+                        }
+                    }
+                    // Adjust menu container scroll after expanding/collapsing
+                    adjustMenuScroll();
+                };
+
+                if (category.children) {
+                    const subcategoryElement = createSubcategoryElement(category, newPath, category.children, false);
+                    if (subcategoryElement) {
+                        categoryElement.appendChild(subcategoryElement);
+                    }
+                } else if (category.tabList) {
+                    const subcategoryElement = createSubcategoryElement(category, newPath, category.tabList, true);
+                    if (subcategoryElement) {
+                        categoryElement.appendChild(subcategoryElement);
+                    }
+                }
+
+                return categoryElement;
+            }
+
+            function createSubcategoryElement(category, newPath, items, isTabList) {
+                const subcategoryElement = document.createElement('div');
+                subcategoryElement.className = 'subcategory';
+                subcategoryElement.style.display = 'none';
+
+                items.forEach(id => {
+                    if (isTabList) {
+                        if (category.tabs && category.tabs[id]) {
+                            const tab = category.tabs[id];
+                            const tabElement = document.createElement('div');
+                            tabElement.className = 'tab';
+                            tabElement.textContent = tab.name;
+                            tabElement.dataset.fullName = newPath + ' > ' + tab.name;
+                            tabElement.onclick = function(event) {
+                                event.stopPropagation();
+                                toggleRangeImage(tab, newPath + ' > ' + tab.name, rangesData);
+                            };
+                            subcategoryElement.appendChild(tabElement);
+                        }
+                    } else {
+                        const childCategoryElement = createCategoryElement(id, newPath);
+                        if (childCategoryElement) {
+                            subcategoryElement.appendChild(childCategoryElement);
+                        }
+                    }
+                });
+
+                return subcategoryElement;
+            }
+
+            if (categories.root && categories.root.children) {
+                categories.root.children.forEach(childId => {
+                    const rootCategoryElement = createCategoryElement(childId, '');
+                    if (rootCategoryElement) {
+                        menuContent.appendChild(rootCategoryElement);
+                    }
+                });
+            } else {
+                menuContent.innerHTML = '<p>Aucune catégorie racine trouvée.</p>';
+            }
+        }
+
+        function adjustMenuScroll() {
+            const menuContainer = document.getElementById('menu-container');
+            menuContainer.style.overflowY = 'auto';
+            menuContainer.style.maxHeight = `${window.innerHeight - menuContainer.getBoundingClientRect().top - 20}px`;
+        }
+
+        function scrollToCategory(categoryElement) {
+            const menuContainer = document.getElementById('menu-container');
+            const categoryOffsetTop = categoryElement.offsetTop;
+            menuContainer.scrollTop = categoryOffsetTop - menuContainer.offsetTop;
+        }
+
+        function toggleRangeImage(tab, tabFullName, rangesData) {
+            const imagesContainer = document.getElementById('images-container');
+            const existingImage = [...imagesContainer.children].find(child => child.dataset.fullName === tabFullName);
+
+            const tabElements = document.querySelectorAll('.tab');
+            let tabElement = null;
+            tabElements.forEach(element => {
+                if (element.dataset.fullName === tabFullName) {
+                    tabElement = element;
+                }
+            });
+
+            if (existingImage) {
+                imagesContainer.removeChild(existingImage);
+                if (tabElement) tabElement.classList.remove('selected');
+                return;
+            }
+
+            const combinedHands = {};
+
+            if (Array.isArray(tab.rangeList)) {
+                tab.rangeList.forEach(range => {
+                    if (range && rangesData.ranges[range.id]) {
+                        const rangeData = rangesData.ranges[range.id];
+                        const color = rangeData.color;
+                        const type = rangeData.type;
+
+                        if (Array.isArray(range.hands)) {
+                            range.hands.forEach(hand => {
+                                const [handName, ratio] = hand.split(':');
+                                const ratioValue = ratio ? parseFloat(ratio) : 1.0;
+                                if (!combinedHands[handName]) {
+                                    combinedHands[handName] = [];
+                                }
+                                combinedHands[handName].push({ color, type, ratio: ratioValue });
+                            });
+                        }
+                    }
+                });
+            } else {
+                console.error('tab.rangeList is not defined or not an array:', tab.rangeList);
+                alert('No ranges found for this tab.');
+                return;
+            }
+
+            generateRangeImage(combinedHands, tabFullName);
+            if (tabElement) tabElement.classList.add('selected');
+        }
 
 function generateRangeImage(handsWithColors, rangeName) {
     const canvas = document.createElement('canvas');
-    canvas.width = 400;
-    canvas.height = 400;
+    canvas.width = 1200;
+    canvas.height = 1200;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-    const gridSize = 30;
+    const gridSize = 90; // Taille de la grille ajustée
     const labels = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
 
-    // Dessiner la grille
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = '#000';
 
-    for (let i = 0; i <= 13; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * gridSize, 0);
-        ctx.lineTo(i * gridSize, gridSize * 13);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(0, i * gridSize);
-        ctx.lineTo(gridSize * 13, i * gridSize);
-        ctx.stroke();
-    }
-
-    // Dessiner les étiquettes
     ctx.fillStyle = '#000';
-    ctx.font = '14px Arial';
+    ctx.font = '42px Arial'; // Taille de police ajustée
+
+    // Offsets pour les labels
+    const labelOffsetX = gridSize / 2 - 15;
+    const labelOffsetY = 30;
+
+    // Dessiner les labels des colonnes
     for (let i = 0; i < 13; i++) {
-        ctx.fillText(labels[i], i * gridSize + gridSize / 2 - 5, 15);
-        ctx.fillText(labels[i], 5, i * gridSize + gridSize / 2 + 5);
+        ctx.fillText(labels[i], i * gridSize + labelOffsetX, labelOffsetY);
     }
 
-    // Remplir les cellules et ajouter les labels pour toutes les mains
+    // Dessiner les labels des lignes
+    for (let i = 0; i < 13; i++) {
+        ctx.fillText(labels[i], 10, i * gridSize + gridSize / 2 + 15);
+    }
+
+    // Dessiner les rectangles des mains
     for (let row = 0; row < 13; row++) {
         for (let col = 0; col < 13; col++) {
             let rank1 = labels[row];
@@ -670,6 +682,7 @@ function generateRangeImage(handsWithColors, rangeName) {
                 displayHand = rank2 + rank1 + 'o';
             }
 
+            // Déterminer la couleur du rectangle
             if (handsWithColors[displayHand]) {
                 const handDetails = handsWithColors[displayHand];
 
@@ -691,11 +704,12 @@ function generateRangeImage(handsWithColors, rangeName) {
                     });
                 }
 
+                // Dessiner la bordure si nécessaire
                 handDetails.forEach(({ color, type }) => {
                     if (type === 'border') {
                         ctx.strokeStyle = color;
-                        ctx.lineWidth = 4;
-                        ctx.strokeRect(col * gridSize + 2, row * gridSize + 2, gridSize - 4, gridSize - 4);
+                        ctx.lineWidth = 4; // Épaisseur de bordure ajustée
+                        ctx.strokeRect(col * gridSize + 3, row * gridSize + 3, gridSize - 6, gridSize - 6);
                     }
                 });
             } else {
@@ -703,27 +717,50 @@ function generateRangeImage(handsWithColors, rangeName) {
                 ctx.fillRect(col * gridSize + 1, row * gridSize + 1, gridSize - 2, gridSize - 2);
             }
 
+            // Dessiner le texte de la main
             ctx.fillStyle = '#000';
+            ctx.font = 'bold 35px Arial'; // Taille de police pour les mains
             const textWidth = ctx.measureText(displayHand).width;
-            ctx.fillText(displayHand, col * gridSize + (gridSize - textWidth) / 2, row * gridSize + gridSize / 2 + 5);
+            ctx.fillText(displayHand, col * gridSize + (gridSize - textWidth) / 2, row * gridSize + gridSize / 2 + 15);
         }
+    }
+
+    // Dessiner les lignes de la grille après les rectangles
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    for (let i = 0; i <= 13; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * gridSize + 0.5, 0);
+        ctx.lineTo(i * gridSize + 0.5, gridSize * 13);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, i * gridSize + 0.5);
+        ctx.lineTo(gridSize * 13, i * gridSize + 0.5);
+        ctx.stroke();
     }
 
     const imagesContainer = document.getElementById('images-container');
     const rangeImage = document.createElement('div');
     rangeImage.classList.add('range-image');
-    rangeImage.dataset.fullName = rangeName; // Ajout de l'attribut data-full-name
+    rangeImage.dataset.fullName = rangeName;
     rangeImage.innerHTML = `<h3>${rangeName}</h3>`;
     rangeImage.appendChild(canvas);
+
+    const baseImageWidth = 350; // Conserver le redimensionnement à la fin
+    const imageWidth = baseImageWidth * zoomLevel;
+    rangeImage.style.width = `${imageWidth}px`;
+
     imagesContainer.appendChild(rangeImage);
 
     updateImageLayout();
 }
 
 
+
         function updateLegend(rangesData) {
-            const legendContainer = document.getElementById('legend-container');
-            legendContainer.innerHTML = '<h2>Légendes des Actions</h2>';
+            const legendContent = document.getElementById('legend-content');
+            legendContent.innerHTML = '';
 
             const ranges = rangesData.ranges;
             if (ranges) {
@@ -736,69 +773,68 @@ function generateRangeImage(handsWithColors, rangeName) {
                             <div class="legend-color" style="${range.type === 'border' ? 'border: 5px solid ' + range.color + '; width: 15px; height: 15px;' : 'background-color: ' + range.color};"></div>
                             <span>${range.name}</span>
                         `;
-                        legendContainer.appendChild(legendItem);
+                        legendContent.appendChild(legendItem);
                     }
                 });
             }
+
+            document.querySelector('.legend-icon').classList.add('hidden');
         }
 
-        function updateImageLayout() {
-            const imagesContainer = document.getElementById('images-container');
-            const numColumns = parseInt(document.getElementById('numColumns').value, 10);
-            imagesContainer.style.display = 'grid';
-            imagesContainer.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`;
-            imagesContainer.style.gap = '20px';
-        }
+function updateImageLayout() {
+    adjustImageContainerHeight();
+    const imagesContainer = document.getElementById('images-container');
+    const numColumns = parseInt(document.getElementById('numColumns').value, 10);
+    const gap = 10; // Fixer un espacement constant entre les images
 
-		function zoomImages(factor) {
-			zoomLevel *= factor;
-			const rangeImages = document.querySelectorAll('.range-image');
-			rangeImages.forEach(rangeImage => {
-				rangeImage.style.transform = `scale(${zoomLevel})`;
-			});
-		}
+    const baseImageWidth = 350; // Largeur de base de l'image
+    const imageWidth = baseImageWidth * zoomLevel;
+
+    // Calculer la largeur totale disponible pour les images
+    const containerWidth = imagesContainer.clientWidth;
+
+    // Ajuster le nombre de colonnes en fonction de l'espace disponible
+    let adjustedNumColumns = numColumns;
+    while (adjustedNumColumns > 1 && (adjustedNumColumns * imageWidth + (adjustedNumColumns - 1) * gap) > containerWidth) {
+        adjustedNumColumns--;
+    }
+
+    imagesContainer.style.display = 'grid';
+    imagesContainer.style.gridTemplateColumns = `repeat(${adjustedNumColumns}, ${imageWidth}px)`;
+    imagesContainer.style.gap = `${gap}px`;
+}
+
+
+    function updateZoom() {
+        const zoomSlider = document.getElementById('zoomSlider');
+        zoomLevel = parseFloat(zoomSlider.value);
+        document.getElementById('zoomValue').innerText = zoomLevel.toFixed(1);
+
+        const baseImageWidth = 350; // Base width of image
+        const imageWidth = baseImageWidth * zoomLevel;
+
+        const rangeImages = document.querySelectorAll('.range-image');
+        rangeImages.forEach(rangeImage => {
+            rangeImage.style.width = `${imageWidth}px`;
+        });
+
+        updateImageLayout();
+    }
 
         function clearImages() {
             const imagesContainer = document.getElementById('images-container');
             imagesContainer.innerHTML = '';
-            document.getElementById('legend-container').innerHTML = '<h2>Légendes des Actions</h2>';
 
             const tabElements = document.querySelectorAll('.tab.selected');
             tabElements.forEach(tab => tab.classList.remove('selected'));
         }
-        // Fonction pour basculer le upload-container
-        function toggleUploadContainer() {
-            const uploadContent = document.querySelector('.upload-content');
-            const collapseButtonIcon = document.querySelector('.collapse-button i');
-            if (uploadContent.classList.contains('collapsed')) {
-                uploadContent.classList.remove('collapsed');
-                collapseButtonIcon.classList.remove('fa-chevron-down');
-                collapseButtonIcon.classList.add('fa-chevron-up');
-            } else {
-                uploadContent.classList.add('collapsed');
-                collapseButtonIcon.classList.remove('fa-chevron-up');
-                collapseButtonIcon.classList.add('fa-chevron-down');
-            }
-        }
-
-        // Fonction pour basculer le menu-container
-        function toggleMenuContainer() {
-            const menuContainer = document.querySelector('.menu-container');
-            const menuContent = document.querySelector('.menu-content');
-            const menuCollapseButtonIcon = document.querySelector('.menu-collapse-button i');
-            if (menuContainer.classList.contains('collapsed')) {
-                menuContainer.classList.remove('collapsed');
-                menuContent.classList.remove('collapsed');
-                menuCollapseButtonIcon.classList.remove('fa-chevron-right');
-                menuCollapseButtonIcon.classList.add('fa-chevron-left');
-            } else {
-                menuContainer.classList.add('collapsed');
-                menuContent.classList.add('collapsed');
-                menuCollapseButtonIcon.classList.remove('fa-chevron-left');
-                menuCollapseButtonIcon.classList.add('fa-chevron-right');
-            }
-        }
-
+function adjustImageContainerHeight() {
+    const imagesContainer = document.getElementById('images-container');
+    const uploadContainer = document.getElementById('upload-container');
+    const availableHeight = window.innerHeight - uploadContainer.offsetHeight - 120; // Ajustement pour laisser un peu de marge
+    imagesContainer.style.height = `${availableHeight}px`;
+    imagesContainer.style.overflowY = 'auto'; // Permettre le défilement vertical si nécessaire
+}
     </script>
 </body>
 </html>
