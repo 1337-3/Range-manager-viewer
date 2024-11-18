@@ -48,9 +48,17 @@
         }
 
         .info-container {
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            max-width: 600px;
+            position: fixed;
             bottom: 20px;
             right: 20px;
+            z-index: 1000;
         }
+
 
         .menu-container.fixed {
             left: 20px;
@@ -141,7 +149,6 @@
 
         .upload-container label {
             font-size: 16px;
-            margin-bottom: 10px;
             color: #334e68;
             font-weight: 500;
         }
@@ -150,8 +157,7 @@
             padding: 12px;
             border: 1px solid #bcccdc;
             border-radius: 8px;
-            width: 120px;
-            margin-bottom: 15px;
+            width: 30px;
             font-size: 16px;
             color: #334e68;
         }
@@ -287,6 +293,47 @@
             margin-right: 10px;
             border-radius: 3px;
         }
+		
+		.button-container {
+			display: flex;
+			flex-direction: row;
+			gap: 10px;
+			justify-content: space-between;
+		}
+		
+#columns-selector input[type="number"],
+#columns-selector select {
+    padding: 12px;
+    border: 1px solid #bcccdc;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #334e68;
+    margin-left: 10px; /* Espace uniforme entre l'étiquette et l'input */
+}
+
+#columns-selector select {
+    -webkit-appearance: none;  /* Pour supprimer l'apparence par défaut du select sur certains navigateurs */
+    -moz-appearance: none;  /* Pour Firefox */
+    appearance: none;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+        #languageSelector {
+            margin-bottom: 15px;
+            padding: 5px;
+            border-radius: 8px;
+            border: 1px solid #bcccdc;
+            font-size: 16px;
+            color: #334e68;
+            cursor: pointer;
+            appearance: none;
+            background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 class=%22feather feather-chevron-down%22%3E%3Cpolyline points=%226 9 12 15 18 9%22%3E%3C/polyline%3E%3C/svg%3E');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            width: 150px;
+        }
     </style>
 </head>
 <body>
@@ -298,14 +345,20 @@
         <button class="close-button" onclick="toggleUploadContainer()">
             <i class="fas fa-times"></i>
         </button>
-        <h2>Upload Range Manager File</h2>
-        <input type="file" id="fileInput" accept=".rm" />
-        <button onclick="handleFileUpload()"><i class="fas fa-file-upload"></i> Afficher</button>
-        <div id="columns-selector">
-            <label for="numColumns">Nombre de Colonnes: </label>
-            <input type="number" id="numColumns" value="4" min="1" max="8" onchange="updateImageLayout()">
+        <h2 id="uploadTitle">Upload Range Manager File</h2>
+        <input type="file" id="fileInput" accept=".rm,.json,*/*" />
+        <div class="button-container" style="display: flex; gap: 10px; margin-top: 10px;">
+            <button id="showButton" onclick="handleFileUpload()"><i class="fas fa-file-upload"></i> Afficher</button>
+            <button id="clearButton" onclick="clearImages()"><i class="fas fa-trash-alt"></i> Nettoyer</button>
         </div>
-        <button onclick="clearImages()"><i class="fas fa-trash-alt"></i> Effacer les Images</button>
+        <div id="columns-selector" style="display: flex; align-items: center;">
+            <label id="columnsLabel" for="numColumns">Colonnes: </label>
+            <input type="number" id="numColumns" value="4" min="1" max="8" onchange="updateImageLayout()">
+            <select id="modeSelection" onchange="updateVisualizationMode()" style="margin-left: 10px;">
+                <option value="normal">Normal</option>
+                <option value="rta">RTA</option>
+            </select>
+        </div>
         <input type="range" id="zoomSlider" class="zoom-slider" min="0.2" max="4" step="0.1" value="1" oninput="updateZoom()">
         <label for="zoomSlider">Zoom: <span id="zoomValue">1</span>x</label>
     </div>
@@ -326,15 +379,22 @@
         <i class="fas fa-info-circle"></i>
     </div>
 
-    <div class="info-container" id="info-container">
-        <button class="close-button" onclick="toggleInfoContainer()">
-            <i class="fas fa-times"></i>
-        </button>
-        <h2>Informations</h2>
-        <p>Le <b>Poker Range Visualizer</b> est une application web qui vous permet de charger et de visualiser des ranges exportées depuis <a href="https://range-manager.com/" target="_blank"><b>Range Manager</b></a>. Vous pouvez naviguer dans les catégories et les ranges via le menu latéral, afficher ou masquer les images correspondantes, ajuster le zoom sur les images, et personnaliser l'affichage en modifiant le nombre de colonnes. Les panneaux de contrôle et de menu peuvent être réduits pour optimiser l'espace, et une légende vous aide à comprendre les actions représentées par les couleurs.</p>
-        <p>Vos ranges sont traitées en local par votre navigateur et resteront privées</p>
-        <p>L'auteur de cette page n'a aucun lien avec Range Manager, ni ne perçoit de rémunération mais vous encourage à soutenir l'auteur de Range Manager, n'hésitez pas à <a href="https://range-manager.com/buy/" target="_blank"><strong>Acheter une licence</strong></a>.</p>
-    </div>
+	<div class="info-container" id="info-container">
+		<button class="close-button" onclick="toggleInfoContainer()">
+			<i class="fas fa-times"></i>
+		</button>
+        <label for="languageSelector">Choisissez la langue : </label>
+        <select id="languageSelector" onchange="changeLanguage()">
+            <option value="fr" class="language-option fr" selected>🇫🇷 Français</option>
+            <option value="en" class="language-option en">🇺🇸 English</option>
+            <option value="es" class="language-option es">🇪🇸 Español</option>
+        </select>
+		<div id="infoContent">
+			<p>Le <b>Poker Range Visualizer</b> est une application web qui vous permet de charger et de visualiser des ranges exportées depuis <a href="https://range-manager.com/" target="_blank"><b>Range Manager</b></a>. Vous pouvez naviguer dans les catégories et les ranges via le menu latéral, afficher ou masquer les images correspondantes, ajuster le zoom sur les images, et personnaliser l'affichage en modifiant le nombre de colonnes. Les panneaux de contrôle et de menu peuvent être réduits pour optimiser l'espace, et une légende vous aide à comprendre les actions représentées par les couleurs.</p>
+			<p>Vos ranges sont traitées en local par votre navigateur et resteront privées</p>
+			<p>L'auteur de cette page n'a aucun lien avec Range Manager, ni ne perçoit de rémunération mais vous encourage à soutenir l'auteur de Range Manager, n'hésitez pas à <a href="https://range-manager.com/buy/" target="_blank"><strong>Acheter une licence</strong></a>.</p>
+		</div>
+	</div>
 
     <div class="menu-icon hidden" id="menu-icon" onclick="toggleMenuContainer()" style="top: calc(20px + 20px + 20px + 200px);">
         <i class="fas fa-bars"></i>
@@ -364,6 +424,67 @@
         adjustContainerPositions();
         adjustImageContainerHeight();
     });
+
+        const translations = {
+            en: {
+                title: "Information",
+                description: "The <b>Poker Range Visualizer</b> is a web application that allows you to upload and visualize ranges exported from <a href=\"https://range-manager.com/\" target=\"_blank\"><b>Range Manager</b></a>. Here are the main features: <ul><li><b>Intuitive Navigation</b>: Browse different categories and ranges using the side menu.</li><li><b>Display Control</b>: Show or hide corresponding images, adjust zoom for detailed views, and customize the layout by changing the number of columns.</li><li><b>Visualization Modes</b>: Switch between <b>normal</b> and <b>RTA</b> modes to visualize ranges according to your specific needs.</li><li><b>Interactive Interface</b>: Use buttons to upload, clear, or adjust the layout of images.</li><li><b>Dynamic Legend</b>: A legend helps interpret actions represented by colors on the images.</li><li><b>Privacy Assurance</b>: All range data is processed locally in your browser and remains private.</li></ul> The author of this page is not affiliated with <b>Range Manager</b> and does not receive any compensation for this service. You can support the author of Range Manager by <a href=\"https://range-manager.com/buy/\" target=\"_blank\"><strong>buying a license</strong></a>.",
+                uploadTitle: "Upload Range Manager File",
+                showButton: "Show",
+                clearButton: "Clear",
+                columnsLabel: "Columns:"
+            },
+            fr: {
+                title: "Informations",
+                description: "<p>Le <b>Poker Range Visualizer</b> est une application web qui vous permet de charger et de visualiser des ranges exportées depuis <a href=\"https://range-manager.com/\" target=\"_blank\"><b>Range Manager</b></a>. Voici les fonctionnalités principales :</p><ul><li><b>Navigation intuitive</b> : Parcourez les différentes catégories et ranges à l'aide du menu latéral.</li><li><b>Contrôle de l'affichage</b> : Affichez ou masquez les images correspondantes, ajustez le zoom pour une vue détaillée et personnalisez l'agencement en modifiant le nombre de colonnes.</li><li><b>Modes de visualisation</b> : Passez en mode <b>normal</b> ou <b>RTA</b> pour afficher les ranges selon vos besoins spécifiques.</li><li><b>Interface interactive</b> : Utilisez les boutons pour charger, nettoyer ou ajuster la mise en page des images.</li><li><b>Légende dynamique</b> : Une légende vous aide à interpréter les actions, représentées par des couleurs sur les images.</li><li><b>Respect de la confidentialité</b> : Toutes les données de range sont traitées localement dans votre navigateur et restent entièrement privées.</li></ul> L'auteur de cette page n'est pas affilié à <b>Range Manager</b> et ne perçoit aucune rémunération pour ce service. Vous pouvez soutenir l'auteur de Range Manager en <a href=\"https://range-manager.com/buy/\" target=\"_blank\"><strong>achetant une licence</strong></a>.",
+                uploadTitle: "Charger un fichier Range Manager",
+                showButton: "Afficher",
+                clearButton: "Nettoyer",
+                columnsLabel: "Colonnes :"
+            },
+            es: {
+                title: "Información",
+                description: "El <b>Poker Range Visualizer</b> es una aplicación web que le permite cargar y visualizar rangos exportados de <a href=\"https://range-manager.com/\" target=\"_blank\"><b>Range Manager</b></a>. Las funciones principales son: <ul><li><b>Navegación intuitiva</b>: Explore diferentes categorías y rangos mediante el menú lateral.</li><li><b>Control de visualización</b>: Muestre u oculte las imágenes correspondientes, ajuste el zoom para una vista detallada y personalice el diseño cambiando el número de columnas.</li><li><b>Modos de visualización</b>: Cambie entre los modos <b>normal</b> y <b>RTA</b> para visualizar los rangos según sus necesidades específicas.</li><li><b>Interfaz interactiva</b>: Utilice los botones para cargar, limpiar o ajustar la disposición de las imágenes.</li><li><b>Leyenda dinámica</b>: Una leyenda le ayuda a interpretar las acciones representadas por los colores en las imágenes.</li><li><b>Privacidad garantizada</b>: Todos los datos de los rangos se procesan localmente en su navegador y permanecen privados.</li></ul> El autor de esta página no está afiliado a <b>Range Manager</b> y no recibe ninguna compensación por este servicio. Puede apoyar al autor de Range Manager <a href=\"https://range-manager.com/buy/\" target=\"_blank\"><strong>comprando una licencia</strong></a>.",
+                uploadTitle: "Subir archivo de Range Manager",
+                showButton: "Mostrar",
+                clearButton: "Limpiar",
+                columnsLabel: "Columnas:"
+            }
+        };
+
+        function changeLanguage() {
+            const selectedLanguage = document.getElementById('languageSelector').value;
+            const translation = translations[selectedLanguage];
+            
+            // Mettre à jour le contenu traduit dans le bloc d'informations
+            document.getElementById('infoContent').innerHTML = `
+                <h2>${translation.title}</h2>
+                <p>${translation.description}</p>
+            `;
+            
+            // Mettre à jour le contenu traduit dans le bloc d'upload
+            document.getElementById('uploadTitle').innerText = translation.uploadTitle;
+            document.getElementById('showButton').innerHTML = `<i class="fas fa-file-upload"></i> ${translation.showButton}`;
+            document.getElementById('clearButton').innerHTML = `<i class="fas fa-trash-alt"></i> ${translation.clearButton}`;
+            document.getElementById('columnsLabel').innerText = translation.columnsLabel;
+        }
+
+// Initialiser la langue par défaut
+window.addEventListener('load', changeLanguage);
+
+    let visualizationMode = 'normal';
+
+    function updateVisualizationMode() {
+        const modeSelection = document.getElementById('modeSelection');
+        visualizationMode = modeSelection.value;
+        if (visualizationMode === 'rta') {
+            // If switching to RTA mode, reinitialize the image layout to match RTA rules
+            applyRtaMode();
+        } else {
+            // Reinitialize normal mode display
+            updateImageLayout();
+        }
+    }
 
     function adjustContainerPositions() {
         const uploadContainer = document.getElementById('upload-container');
@@ -588,54 +709,69 @@
             menuContainer.scrollTop = categoryOffsetTop - menuContainer.offsetTop;
         }
 
-        function toggleRangeImage(tab, tabFullName, rangesData) {
-            const imagesContainer = document.getElementById('images-container');
-            const existingImage = [...imagesContainer.children].find(child => child.dataset.fullName === tabFullName);
+function toggleRangeImage(tab, tabFullName, rangesData) {
+    const imagesContainer = document.getElementById('images-container');
+    const existingImage = [...imagesContainer.children].find(child => child.dataset.fullName === tabFullName);
 
-            const tabElements = document.querySelectorAll('.tab');
-            let tabElement = null;
-            tabElements.forEach(element => {
-                if (element.dataset.fullName === tabFullName) {
-                    tabElement = element;
-                }
-            });
-
-            if (existingImage) {
-                imagesContainer.removeChild(existingImage);
-                if (tabElement) tabElement.classList.remove('selected');
-                return;
-            }
-
-            const combinedHands = {};
-
-            if (Array.isArray(tab.rangeList)) {
-                tab.rangeList.forEach(range => {
-                    if (range && rangesData.ranges[range.id]) {
-                        const rangeData = rangesData.ranges[range.id];
-                        const color = rangeData.color;
-                        const type = rangeData.type;
-
-                        if (Array.isArray(range.hands)) {
-                            range.hands.forEach(hand => {
-                                const [handName, ratio] = hand.split(':');
-                                const ratioValue = ratio ? parseFloat(ratio) : 1.0;
-                                if (!combinedHands[handName]) {
-                                    combinedHands[handName] = [];
-                                }
-                                combinedHands[handName].push({ color, type, ratio: ratioValue });
-                            });
-                        }
-                    }
-                });
-            } else {
-                console.error('tab.rangeList is not defined or not an array:', tab.rangeList);
-                alert('No ranges found for this tab.');
-                return;
-            }
-
-            generateRangeImage(combinedHands, tabFullName);
-            if (tabElement) tabElement.classList.add('selected');
+    const tabElements = document.querySelectorAll('.tab');
+    let tabElement = null;
+    tabElements.forEach(element => {
+        if (element.dataset.fullName === tabFullName) {
+            tabElement = element;
         }
+    });
+
+    if (existingImage) {
+        // In RTA mode, if an existing image is clicked, move it to the front (leftmost position)
+        if (visualizationMode === 'rta') {
+            imagesContainer.removeChild(existingImage);
+            imagesContainer.insertBefore(existingImage, imagesContainer.firstChild);
+            return;
+        } else {
+            imagesContainer.removeChild(existingImage);
+            if (tabElement) tabElement.classList.remove('selected');
+            return;
+        }
+    }
+
+    const combinedHands = {};
+
+    if (Array.isArray(tab.rangeList)) {
+        tab.rangeList.forEach(range => {
+            if (range && rangesData.ranges[range.id]) {
+                const rangeData = rangesData.ranges[range.id];
+                const color = rangeData.color;
+                const type = rangeData.type;
+                const labels = tab.labels || null;
+                const gridMode = tab.gridMode || 'default';
+
+                if (Array.isArray(range.hands)) {
+                    range.hands.forEach(hand => {
+                        const [handName, ratio] = hand.split(':');
+                        const ratioValue = ratio ? parseFloat(ratio) : 1.0;
+                        if (!combinedHands[handName]) {
+                            combinedHands[handName] = [];
+                        }
+                        combinedHands[handName].push({ color, type, ratio: ratioValue, labels, gridMode });
+                    });
+                }
+            }
+        });
+    } else {
+        console.error('tab.rangeList is not defined or not an array:', tab.rangeList);
+        alert('No ranges found for this tab.');
+        return;
+    }
+
+    generateRangeImage(combinedHands, tabFullName);
+    if (tabElement) tabElement.classList.add('selected');
+
+    // Apply RTA mode constraints if necessary
+    if (visualizationMode === 'rta') {
+        imagesContainer.insertBefore(imagesContainer.lastChild, imagesContainer.firstChild);
+        applyRtaMode();
+    }
+}
 
 function generateRangeImage(handsWithColors, rangeName) {
     const canvas = document.createElement('canvas');
@@ -685,14 +821,12 @@ function generateRangeImage(handsWithColors, rangeName) {
             // Déterminer la couleur du rectangle
             if (handsWithColors[displayHand]) {
                 const handDetails = handsWithColors[displayHand];
+                const gridMode = handDetails[0].gridMode;
+                const hasLabels = handDetails[0].labels;
+                const fontSize = hasLabels && gridMode === 'small-init' ? '24px' : '35px';
 
-                if (handDetails.length === 1) {
-                    const { color, type, ratio } = handDetails[0];
-                    if (type === 'color') {
-                        ctx.fillStyle = color;
-                        ctx.fillRect(col * gridSize + 1, row * gridSize + 1, gridSize - 2, gridSize - 2);
-                    }
-                } else {
+                // Si plusieurs actions ou un ratio < 1 en mode small-init, dessiner les couleurs proportionnellement
+                if (handDetails.length > 1 || (gridMode === 'small-init' && handDetails.some(detail => detail.ratio < 1))) {
                     let startX = col * gridSize + 1;
                     handDetails.forEach(({ color, type, ratio }) => {
                         if (type === 'color') {
@@ -702,26 +836,140 @@ function generateRangeImage(handsWithColors, rangeName) {
                             startX += width;
                         }
                     });
+                } else if (handDetails.length === 1) {
+                    const { color, type } = handDetails[0];
+                    if (type === 'color') {
+                        ctx.fillStyle = color;
+                        ctx.fillRect(col * gridSize + 1, row * gridSize + 1, gridSize - 2, gridSize - 2);
+                    }
                 }
 
-                // Dessiner la bordure si nécessaire
-                handDetails.forEach(({ color, type }) => {
-                    if (type === 'border') {
-                        ctx.strokeStyle = color;
-                        ctx.lineWidth = 4; // Épaisseur de bordure ajustée
-                        ctx.strokeRect(col * gridSize + 3, row * gridSize + 3, gridSize - 6, gridSize - 6);
+				// Dessiner la bordure si nécessaire
+				const borderDetails = handDetails.filter(({ type }) => type === 'border');
+				if (borderDetails.length > 0) {
+					const borderThickness = 10;
+					const halfBorder = borderThickness / 2;
+					const totalPerimeter = 4 * gridSize;
+					let lengthAccumulated = 0;
+				
+					// Définir les côtés et leurs positions de départ/fin le long du périmètre
+					const sides = [
+						{
+							side: 'left',
+							length: gridSize,
+							startPos: 0,
+							draw: function(ctx, start, end) {
+								const x = col * gridSize + halfBorder;
+								ctx.moveTo(x, (row + 1) * gridSize - start);
+								ctx.lineTo(x, (row + 1) * gridSize - end);
+							}
+						},
+						{
+							side: 'bottom',
+							length: gridSize,
+							startPos: gridSize,
+							draw: function(ctx, start, end) {
+								const y = (row + 1) * gridSize - halfBorder;
+								ctx.moveTo(col * gridSize + start, y);
+								ctx.lineTo(col * gridSize + end, y);
+							}
+						},
+						{
+							side: 'right',
+							length: gridSize,
+							startPos: 2 * gridSize,
+							draw: function(ctx, start, end) {
+								const x = (col + 1) * gridSize - halfBorder;
+								ctx.moveTo(x, row * gridSize + start);
+								ctx.lineTo(x, row * gridSize + end);
+							}
+						},
+						{
+							side: 'top',
+							length: gridSize,
+							startPos: 3 * gridSize,
+							draw: function(ctx, start, end) {
+								const y = row * gridSize + halfBorder;
+								ctx.moveTo((col + 1) * gridSize - start, y);
+								ctx.lineTo((col + 1) * gridSize - end, y);
+							}
+						}
+					];
+				
+					borderDetails.forEach(({ color, ratio }) => {
+						const lengthToCover = totalPerimeter * ratio;
+						let lengthRemaining = lengthToCover;
+						let currentPosition = lengthAccumulated;
+				
+						ctx.strokeStyle = color;
+						ctx.lineWidth = borderThickness;
+				
+						while (lengthRemaining > 0 && currentPosition < totalPerimeter) {
+							// Déterminer le côté actuel
+							let side = null;
+							for (let i = 0; i < sides.length; i++) {
+								if (currentPosition >= sides[i].startPos && currentPosition < sides[i].startPos + sides[i].length) {
+									side = sides[i];
+									break;
+								}
+							}
+				
+							if (!side) break; // Sécurité
+				
+							const sidePos = currentPosition - side.startPos;
+							const lengthOnSide = Math.min(lengthRemaining, side.length - sidePos);
+				
+							ctx.beginPath();
+				
+							side.draw(ctx, sidePos, sidePos + lengthOnSide);
+				
+							ctx.stroke();
+				
+							lengthRemaining -= lengthOnSide;
+							currentPosition += lengthOnSide;
+						}
+				
+						lengthAccumulated += lengthToCover;
+					});
+				}
+
+                // Dessiner le contenu de la case en fonction des labels et du gridMode
+                if (hasLabels) {
+                    ctx.fillStyle = '#000';
+                    if (gridMode === 'small-init') {
+                        // Afficher le nom de la main avec une taille de police normale
+                        ctx.font = `normal 28px Arial`;
+                        const label = handDetails[0].labels[displayHand] || '';
+                        const textWidthHand = ctx.measureText(displayHand).width;
+                        ctx.fillText(displayHand, col * gridSize + (gridSize - textWidthHand) / 2, row * gridSize + gridSize / 2 - 15);
+                        // Afficher le label avec une taille de police plus grande
+                        ctx.font = `normal 32px Arial`;
+                        const textWidthLabel = ctx.measureText(label).width;
+                        ctx.fillText(label, col * gridSize + (gridSize - textWidthLabel) / 2, row * gridSize + gridSize / 2 + 20);
+                    } else {
+                        // Afficher uniquement le label
+                        ctx.font = `normal 32px Arial`;
+                        const label = handDetails[0].labels[displayHand] || '';
+                        const labelLines = label.split(' ');
+                        const lineSpacing = 30; // Espacement entre les lignes
+                        labelLines.forEach((line, index) => {
+                            const textWidth = ctx.measureText(line).width;
+                            ctx.fillText(line, col * gridSize + (gridSize - textWidth) / 2, row * gridSize + gridSize / 2 - 10 + (index * lineSpacing));
+                        });
                     }
-                });
+                }
             } else {
                 ctx.fillStyle = '#ccc';
                 ctx.fillRect(col * gridSize + 1, row * gridSize + 1, gridSize - 2, gridSize - 2);
             }
 
-            // Dessiner le texte de la main
-            ctx.fillStyle = '#000';
-            ctx.font = 'bold 35px Arial'; // Taille de police pour les mains
-            const textWidth = ctx.measureText(displayHand).width;
-            ctx.fillText(displayHand, col * gridSize + (gridSize - textWidth) / 2, row * gridSize + gridSize / 2 + 15);
+            // Dessiner le texte de la main si aucun label n'est présent
+            if (!handsWithColors[displayHand] || !handsWithColors[displayHand][0].labels) {
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 35px Arial';
+                const textWidth = ctx.measureText(displayHand).width;
+                ctx.fillText(displayHand, col * gridSize + (gridSize - textWidth) / 2, row * gridSize + gridSize / 2 + 10);
+            }
         }
     }
 
@@ -756,30 +1004,49 @@ function generateRangeImage(handsWithColors, rangeName) {
     updateImageLayout();
 }
 
+function applyRtaMode() {
+    const imagesContainer = document.getElementById('images-container');
+    const numColumns = parseInt(document.getElementById('numColumns').value, 10);
+    const maxImages = numColumns;
 
-
-        function updateLegend(rangesData) {
-            const legendContent = document.getElementById('legend-content');
-            legendContent.innerHTML = '';
-
-            const ranges = rangesData.ranges;
-            if (ranges) {
-                Object.keys(ranges).forEach(rangeId => {
-                    const range = ranges[rangeId];
-                    if (range.color && range.name) {
-                        const legendItem = document.createElement('div');
-                        legendItem.className = 'legend-item';
-                        legendItem.innerHTML = `
-                            <div class="legend-color" style="${range.type === 'border' ? 'border: 5px solid ' + range.color + '; width: 15px; height: 15px;' : 'background-color: ' + range.color};"></div>
-                            <span>${range.name}</span>
-                        `;
-                        legendContent.appendChild(legendItem);
-                    }
-                });
-            }
-
-            document.querySelector('.legend-icon').classList.add('hidden');
+    // Remove the rightmost image if more than the allowed number are displayed
+    while (imagesContainer.children.length > maxImages) {
+        const lastImage = imagesContainer.lastChild;
+        if (lastImage) {
+            imagesContainer.removeChild(lastImage);
+            // Deselect the corresponding menu tab
+            const tabElements = document.querySelectorAll('.tab.selected');
+            tabElements.forEach(tab => {
+                if (tab.dataset.fullName === lastImage.dataset.fullName) {
+                    tab.classList.remove('selected');
+                }
+            });
         }
+    }
+}
+	
+function updateLegend(rangesData) {
+    const legendContent = document.getElementById('legend-content');
+    legendContent.innerHTML = '';
+
+    const ranges = rangesData.ranges;
+    if (ranges) {
+        Object.keys(ranges).forEach(rangeId => {
+            const range = ranges[rangeId];
+            if (range.color && range.name) {
+                const legendItem = document.createElement('div');
+                legendItem.className = 'legend-item';
+                legendItem.innerHTML = `
+                    <div class="legend-color" style="${range.type === 'border' ? 'border: 5px solid ' + range.color + '; width: 15px; height: 15px;' : 'background-color: ' + range.color};"></div>
+                    <span>${range.name}</span>
+                `;
+                legendContent.appendChild(legendItem);
+            }
+        });
+    }
+
+    document.querySelector('.legend-icon').classList.add('hidden');
+}
 
 function updateImageLayout() {
     adjustImageContainerHeight();
@@ -805,29 +1072,30 @@ function updateImageLayout() {
 }
 
 
-    function updateZoom() {
-        const zoomSlider = document.getElementById('zoomSlider');
-        zoomLevel = parseFloat(zoomSlider.value);
-        document.getElementById('zoomValue').innerText = zoomLevel.toFixed(1);
+function updateZoom() {
+    const zoomSlider = document.getElementById('zoomSlider');
+    zoomLevel = parseFloat(zoomSlider.value);
+    document.getElementById('zoomValue').innerText = zoomLevel.toFixed(1);
 
-        const baseImageWidth = 350; // Base width of image
-        const imageWidth = baseImageWidth * zoomLevel;
+    const baseImageWidth = 350; // Base width of image
+    const imageWidth = baseImageWidth * zoomLevel;
 
-        const rangeImages = document.querySelectorAll('.range-image');
-        rangeImages.forEach(rangeImage => {
-            rangeImage.style.width = `${imageWidth}px`;
-        });
+    const rangeImages = document.querySelectorAll('.range-image');
+    rangeImages.forEach(rangeImage => {
+        rangeImage.style.width = `${imageWidth}px`;
+    });
 
-        updateImageLayout();
-    }
+    updateImageLayout();
+}
 
-        function clearImages() {
-            const imagesContainer = document.getElementById('images-container');
-            imagesContainer.innerHTML = '';
+function clearImages() {
+	const imagesContainer = document.getElementById('images-container');
+	imagesContainer.innerHTML = '';
 
-            const tabElements = document.querySelectorAll('.tab.selected');
-            tabElements.forEach(tab => tab.classList.remove('selected'));
-        }
+	const tabElements = document.querySelectorAll('.tab.selected');
+	tabElements.forEach(tab => tab.classList.remove('selected'));
+}
+		
 function adjustImageContainerHeight() {
     const imagesContainer = document.getElementById('images-container');
     const uploadContainer = document.getElementById('upload-container');
