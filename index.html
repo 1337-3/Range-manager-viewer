@@ -105,7 +105,7 @@
         .upload-container h2, .legend-container h2, .info-container h2, .menu-container h2 {
             font-size: 24px;
             margin-bottom: 15px;
-            color: #102a43;
+            color: #4a90e2;
             text-align: center;
             font-weight: bold;
         }
@@ -149,7 +149,7 @@
 
         .upload-container label {
             font-size: 16px;
-            color: #334e68;
+            color: #4a90e2;
             font-weight: 500;
         }
 
@@ -300,10 +300,80 @@
 			gap: 10px;
 			justify-content: space-between;
 		}
+
+		body.dark-mode {
+			background-color: #1e1e1e;
+			color: #f5f5f5;
+		}
+	
+		.upload-container.dark-mode, .legend-container.dark-mode, .info-container.dark-mode, .menu-container.dark-mode {
+			background: linear-gradient(135deg, #333 0%, #444 100%);
+			color: #f5f5f5;
+		}
+	
+		.upload-container.dark-mode button, .legend-container.dark-mode button, .info-container.dark-mode button, .menu-container.dark-mode button {
+			background-color: #4a90e2;
+		}
+	
+		.upload-container.dark-mode button:hover, .legend-container.dark-mode button:hover, .info-container.dark-mode button:hover, .menu-container.dark-mode button:hover {
+			background-color: #357ab8;
+		}
+	
+		.upload-icon.dark-mode, .legend-icon.dark-mode, .info-icon.dark-mode, .menu-icon.dark-mode {
+			background-color: #333;
+		}
+	
+		.category.dark-mode, .tab.dark-mode {
+			background-color: #555;
+		}
+	
+		.category.dark-mode:hover, .tab.dark-mode:hover {
+			background-color: #777;
+		}
+	
+		.range-image.dark-mode canvas {
+			border: 1px solid #fff;
+		}
 		
+		body.dark-mode input[type="file"],
+		body.dark-mode select {
+			background-color: #333;
+			color: #f5f5f5;
+			border: 2px solid #555;
+		}
+	
+		body.dark-mode input[type="file"]::file-selector-button {
+			background-color: #4a90e2;
+			color: #fff;
+			border: 1px solid #357ab8;
+			padding: 5px;
+			cursor: pointer;
+		}
+	
+		.upload-container.dark-mode input[type="file"]:hover {
+			background-color: #1e1e1e;
+		}
+	
+		body.dark-mode select {
+			background-color: #444;
+			color: #f5f5f5;
+			border: 1px solid #666;
+			padding: 10px;
+		}
+	
+		body.dark-mode select option {
+			background-color: #333;
+			color: #f5f5f5;
+		}
+	
+		body.dark-mode #columns-selector label,
+		body.dark-mode label {
+			color: #f5f5f5;
+		}
+	
 #columns-selector input[type="number"],
 #columns-selector select {
-    padding: 12px;
+    padding: 10px;
     border: 1px solid #bcccdc;
     border-radius: 8px;
     font-size: 16px;
@@ -319,9 +389,18 @@
     cursor: pointer;
 }
 
+		#columns-selector.dark-mode input[type="number"],
+		#columns-selector.dark-mode select,
+		#languageSelector.dark-mode	{
+			background-color: #444;
+			color: #f5f5f5;
+			border: 1px solid #666;
+			padding: 10px;
+		}
+	
         #languageSelector {
             margin-bottom: 15px;
-            padding: 5px;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid #bcccdc;
             font-size: 16px;
@@ -333,6 +412,12 @@
             background-position: right 10px center;
             background-size: 16px;
             width: 150px;
+        }
+		
+		.info-container .language-dark-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
         }
     </style>
 </head>
@@ -383,12 +468,14 @@
 		<button class="close-button" onclick="toggleInfoContainer()">
 			<i class="fas fa-times"></i>
 		</button>
-        <label for="languageSelector">Choisissez la langue : </label>
-        <select id="languageSelector" onchange="changeLanguage()">
-            <option value="fr" class="language-option fr" selected>🇫🇷 Français</option>
-            <option value="en" class="language-option en">🇺🇸 English</option>
-            <option value="es" class="language-option es">🇪🇸 Español</option>
-        </select>
+		<div class="language-dark-container">
+			<select id="languageSelector" onchange="changeLanguage()">
+				<option value="fr" class="language-option fr" selected>🇫🇷 Français</option>
+				<option value="en" class="language-option en">🇺🇸 English</option>
+				<option value="es" class="language-option es">🇪🇸 Español</option>
+			</select>
+			<button id="darkModeToggle" onclick="toggleDarkMode()">Dark Mode</button>
+		</div>
 		<div id="infoContent">
 			<p>Le <b>Poker Range Visualizer</b> est une application web qui vous permet de charger et de visualiser des ranges exportées depuis <a href="https://range-manager.com/" target="_blank"><b>Range Manager</b></a>. Vous pouvez naviguer dans les catégories et les ranges via le menu latéral, afficher ou masquer les images correspondantes, ajuster le zoom sur les images, et personnaliser l'affichage en modifiant le nombre de colonnes. Les panneaux de contrôle et de menu peuvent être réduits pour optimiser l'espace, et une légende vous aide à comprendre les actions représentées par les couleurs.</p>
 			<p>Vos ranges sont traitées en local par votre navigateur et resteront privées</p>
@@ -415,7 +502,59 @@
     </div>
 
 <script>
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+
+        const containers = document.querySelectorAll('.upload-container, .legend-container, .info-container, .menu-container, .upload-icon, .legend-icon, .info-icon, .menu-icon, .range-image canvas,#columns-selector, #languageSelector');
+        containers.forEach(container => {
+            container.classList.toggle('dark-mode');
+        });
+
+        // Sauvegarder l'état du Dark Mode dans le localStorage
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            localStorage.setItem('darkMode', 'disabled');
+        }
+    }
+
+    // Appliquer le Dark Mode si activé lors du chargement de la page
+	
     window.addEventListener('load', function() {
+        // Apply saved Dark Mode
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            toggleDarkMode();
+        }
+		
+        // Apply saved language
+        const savedLanguage = localStorage.getItem('language');
+        if (savedLanguage) {
+            document.getElementById('languageSelector').value = savedLanguage;
+            changeLanguage();
+        }
+		
+        // Apply saved number of columns
+        const savedNumColumns = localStorage.getItem('numColumns');
+        if (savedNumColumns) {
+            document.getElementById('numColumns').value = savedNumColumns;
+            updateImageLayout();
+        }
+		
+        // Apply saved visualization mode
+        const savedVisualizationMode = localStorage.getItem('visualizationMode');
+        if (savedVisualizationMode) {
+            document.getElementById('modeSelection').value = savedVisualizationMode;
+            updateVisualizationMode();
+        }
+		
+        // Apply saved zoom level
+        const savedZoomLevel = localStorage.getItem('zoomLevel');
+        if (savedZoomLevel) {
+            document.getElementById('zoomSlider').value = savedZoomLevel;
+            updateZoom();
+        }
+		
         adjustContainerPositions();
         adjustImageContainerHeight();
     });
@@ -454,6 +593,7 @@
 
         function changeLanguage() {
             const selectedLanguage = document.getElementById('languageSelector').value;
+			localStorage.setItem('language', selectedLanguage);
             const translation = translations[selectedLanguage];
             
             // Mettre à jour le contenu traduit dans le bloc d'informations
@@ -476,7 +616,8 @@ window.addEventListener('load', changeLanguage);
 
     function updateVisualizationMode() {
         const modeSelection = document.getElementById('modeSelection');
-        visualizationMode = modeSelection.value;
+		visualizationMode = modeSelection.value;
+		localStorage.setItem('visualizationMode', visualizationMode);
         if (visualizationMode === 'rta') {
             // If switching to RTA mode, reinitialize the image layout to match RTA rules
             applyRtaMode();
@@ -500,6 +641,10 @@ window.addEventListener('load', changeLanguage);
 
     let zoomLevel = 1;
     let rangesData = null;
+	let chartConfig = null;
+	let backgroundColor = '#ffffff'; // Couleur de fond par défaut
+	let fontColor = '#000000'; // Couleur de la police par défaut
+
 
         function handleFileUpload() {
             const fileInput = document.getElementById('fileInput');
@@ -518,6 +663,9 @@ window.addEventListener('load', changeLanguage);
                     updateLegend(rangesData);
                     document.querySelector('.legend-container').classList.remove('hidden');
                     document.querySelector('.legend-icon').classList.add('hidden');
+					chartConfig = rangesData.config?.chart;
+					backgroundColor = chartConfig?.backgroundColor || '#ffffff'; // Couleur de fond par défaut
+					fontColor = chartConfig?.fontColor || '#000000'; // Couleur de la police par défaut
                 } catch (error) {
                     alert('Invalid JSON format. Please upload a valid file.');
                 }
@@ -775,17 +923,17 @@ function toggleRangeImage(tab, tabFullName, rangesData) {
 
 function generateRangeImage(handsWithColors, rangeName) {
     const canvas = document.createElement('canvas');
-    canvas.width = 1200;
-    canvas.height = 1200;
+    canvas.width = 1170;
+    canvas.height = 1170;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
     const gridSize = 90; // Taille de la grille ajustée
     const labels = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
 
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = fontColor;
     ctx.font = '42px Arial'; // Taille de police ajustée
 
     // Offsets pour les labels
@@ -935,7 +1083,7 @@ function generateRangeImage(handsWithColors, rangeName) {
 
                 // Dessiner le contenu de la case en fonction des labels et du gridMode
                 if (hasLabels) {
-                    ctx.fillStyle = '#000';
+                    ctx.fillStyle = fontColor;
                     if (gridMode === 'small-init') {
                         // Afficher le nom de la main avec une taille de police normale
                         ctx.font = `normal 28px Arial`;
@@ -959,13 +1107,13 @@ function generateRangeImage(handsWithColors, rangeName) {
                     }
                 }
             } else {
-                ctx.fillStyle = '#ccc';
+                ctx.fillStyle = backgroundColor;
                 ctx.fillRect(col * gridSize + 1, row * gridSize + 1, gridSize - 2, gridSize - 2);
             }
 
             // Dessiner le texte de la main si aucun label n'est présent
             if (!handsWithColors[displayHand] || !handsWithColors[displayHand][0].labels) {
-                ctx.fillStyle = '#000';
+                ctx.fillStyle = fontColor;
                 ctx.font = 'bold 35px Arial';
                 const textWidth = ctx.measureText(displayHand).width;
                 ctx.fillText(displayHand, col * gridSize + (gridSize - textWidth) / 2, row * gridSize + gridSize / 2 + 10);
@@ -1052,6 +1200,7 @@ function updateImageLayout() {
     adjustImageContainerHeight();
     const imagesContainer = document.getElementById('images-container');
     const numColumns = parseInt(document.getElementById('numColumns').value, 10);
+	localStorage.setItem('numColumns', numColumns);
     const gap = 10; // Fixer un espacement constant entre les images
 
     const baseImageWidth = 350; // Largeur de base de l'image
@@ -1076,6 +1225,7 @@ function updateZoom() {
     const zoomSlider = document.getElementById('zoomSlider');
     zoomLevel = parseFloat(zoomSlider.value);
     document.getElementById('zoomValue').innerText = zoomLevel.toFixed(1);
+	localStorage.setItem('zoomLevel', zoomLevel);
 
     const baseImageWidth = 350; // Base width of image
     const imageWidth = baseImageWidth * zoomLevel;
