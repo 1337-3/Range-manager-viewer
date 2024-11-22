@@ -974,7 +974,7 @@ function generateRangeImage(handsWithColors, rangeName) {
                 const fontSize = hasLabels && gridMode === 'small-init' ? '24px' : '35px';
 
                 // Si plusieurs actions ou un ratio < 1 en mode small-init, dessiner les couleurs proportionnellement
-                if (handDetails.length > 1 || (gridMode === 'small-init' && handDetails.some(detail => detail.ratio < 1))) {
+                if (handDetails.length > 1 || handDetails.some(detail => detail.ratio < 1)) {
                     let startX = col * gridSize + 1;
                     handDetails.forEach(({ color, type, ratio }) => {
                         if (type === 'color') {
